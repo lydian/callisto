@@ -5,7 +5,7 @@ from typing import Dict
 
 from jupyter_server.services.contents.manager import ContentsManager
 from tornado.web import HTTPError as TornadoHTTPError
-from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import BadRequest
 from werkzeug.exceptions import NotFound
 
 from callisto.core.config_loader import Config

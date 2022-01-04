@@ -4,6 +4,7 @@ dist/*
 *.egg-info/
 .cache/
 build/
+.coverage
 
 # Editor directories and files
 .idea

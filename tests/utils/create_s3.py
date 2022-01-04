@@ -27,10 +27,10 @@ def set_env():
 
 def upload_fixture_to_s3(client):
     client.create_bucket(Bucket=BUCKET)
-    for root, _ , files in os.walk('tests/fixtures'):
+    for root, _ , files in os.walk('tests/fixtures/notebooks'):
         for name in files:
             path = pathlib.Path(root) / name
-            key = path.relative_to('tests/fixtures')
+            key = path.relative_to('tests/fixtures/notebooks')
             print(path, "->", key)
             client.upload_file(str(path), BUCKET, str(key))
 

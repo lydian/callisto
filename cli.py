@@ -28,7 +28,6 @@ def start(
 ) -> None:
 
     from callisto.app import configure_app
-    print(config)
     run_app(
         app=configure_app(config),
         with_gunicorn=with_gunicorn,
@@ -66,7 +65,7 @@ def start_dev(config, host, port):
                 raise KeyboardInterrupt
     except KeyboardInterrupt:
         for p in ps + [p2]:
-            print("stop", p)
+            click.echo(f"stop {p}")
             p.terminate()
         while True:
             if all(p.poll() is not None for p in ps):

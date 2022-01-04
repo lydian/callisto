@@ -80,8 +80,6 @@ class NotebookContent:
                 dummy = TocNode(1)
                 dummy.add_child(h)
                 tree.append(dummy)
-            elif h.level == 1:
-                tree.append(h)
             elif h.level == prev.level:
                 prev.parents[h.level - 1].add_child(h)
             elif h.level < prev.level:

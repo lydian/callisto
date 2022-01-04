@@ -18,7 +18,7 @@ app = Flask(__name__, static_folder="./built/static", template_folder="./built")
 
 def configure_app(config):
     global app
-    print("configure_app", config)
+    app.logger.info(f"configure_app using config: {config}")
     app.callisto_config = Config.load_from_config_file(config)
     app.contents_loader = Loader(app.callisto_config)
     return app
@@ -44,7 +44,7 @@ def info(path):
 @app.route("/api/get/<path:path>")
 def list(path: str) -> str:
     if path == "<root>":
-        path = "/"
+        path = ""
     r = app.contents_loader.get(path)
     if r["type"] == "directory":
         r["content"] = sorted(
@@ -81,14 +81,13 @@ def render_nb(path):
 
 @app.route("/api/notebook/import/<path:path>")
 def import_nb(path):
-    print(path)
-    path_func = getattr(app.callisto_config, "import_link_func")
-    if path_func:
-        path = path_func(path)
-
     base_url = getattr(app.callisto_config, "jupyterhub_base_url", "").rstrip("/")
     if not base_url:
         return ""
+
+    path_func = getattr(app.callisto_config, "import_link_func")
+    if path_func:
+        path = path_func(path)
 
     if getattr(app.callisto_config, "import_link_with_hubshare_preview"):
         return (
@@ -97,7 +96,7 @@ def import_nb(path):
             + base64.b64encode(path.encode("utf-8")).decode("utf-8")
         )
 
-    return base_url + "/user-redirect/lab/tree" + path
+    return base_url + "/user-redirect/lab/tree/" + path
 
 
 @app.errorhandler(HTTPException)
