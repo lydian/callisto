@@ -6,6 +6,8 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 from flask import Response
+from flask import abort
+from werkzeug.exceptions import HTTPException
 
 
 from callisto.core.contents_loader import Loader
@@ -96,3 +98,15 @@ def import_nb(path):
         )
 
     return base_url + "/user-redirect/lab/tree" + path
+
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    response = e.get_response()
+    output = jsonify({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description
+    })
+    response.content_type = "application/json"
+    return output, e.code

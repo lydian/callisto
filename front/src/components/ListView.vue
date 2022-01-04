@@ -8,6 +8,11 @@
         type="text"
       />
     </div>
+    <div v-if="this.files === null">
+      <div class="spinner-border" role="status">
+        <span class="sr-only"></span>
+      </div>
+    </div>
     <div id="list" class="list-group">
       <a
         v-for="item in matchedFiles"

@@ -2,11 +2,14 @@ import importlib
 from functools import lru_cache
 from typing import Any
 from typing import Dict
-from callisto.core.notebook import NotebookContent
 
 from jupyter_server.services.contents.manager import ContentsManager
+from tornado.web import HTTPError as TornadoHTTPError
+from werkzeug.exceptions import BadRequest, NotFound
+from werkzeug.exceptions import NotFound
 
 from callisto.core.config_loader import Config
+from callisto.core.notebook import NotebookContent
 
 
 class Loader:
@@ -25,11 +28,17 @@ class Loader:
 
 
     def get(self, path: str, **kwargs) -> Dict[str, Any]:
-        r = self.contents_manager.get(path, content=True, **kwargs)
-        return r
+        content = kwargs.pop("content", True)
+        try:
+            return self.contents_manager.get(path, content=content, **kwargs)
+        except TornadoHTTPError as e:
+            if e.status_code == 404:
+                raise NotFound()
+            else:
+                raise BadRequest()
 
     def info(self, path: str) -> Dict[str, Any]:
-        return self.contents_manager.get(path, content=False)
+        return self.get(path, content=False)
 
     @lru_cache(10)
     def get_nb(self, path):
