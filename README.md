@@ -1,4 +1,7 @@
 # callisto
+[![codecov](https://codecov.io/gh/lydian/callisto/branch/master/graph/badge.svg?token=1YB3XJNKJZ)](https://codecov.io/gh/lydian/callisto)
+![build](https://github.com/lydian/callisto/workflows/Build/badge.svg)
+
 
 ![logo](https://user-images.githubusercontent.com/678485/147995610-e9fb67f3-d72e-41ed-82e0-3afb6e89a10d.png?style=centerme)
 
