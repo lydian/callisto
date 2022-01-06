@@ -1,7 +1,7 @@
 from typing import Callable
 
 
-contents_manager_cls = "s3contents.S3ContentsManager"
+contents_manager_cls = "callisto.contents_managers.s3.SimplifiedS3ContentsManager"
 # `contents_manager_cls` can be string or ContentsManger class
 # You can use any existing ContentsManager to load data.
 # If the value is not set, the default would be FileContentsManager

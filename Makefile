@@ -4,3 +4,6 @@ venv:
 
 start-dev: venv
 	venv/bin/python cli.py start-dev --port 5001
+
+test:
+	tox

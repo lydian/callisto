@@ -6,7 +6,7 @@ from jupyter_server.services.contents.filemanager import FileContentsManager
 
 def test_load_from_config_file():
     config = Config.load_from_config_file("tests/fixtures/config.py")
-    assert config.contents_manager_cls == "s3contents.S3ContentsManager"
+    assert config.contents_manager_cls == "callisto.contents_managers.s3.SimplifiedS3ContentsManager"
     assert config.contents_manager_kwargs == {
         "bucket": "test-bucket",
         "access_key_id": "testing",

@@ -14,7 +14,7 @@ setup(
     py_modules=["cli"],
     include_package_data=True,
     install_requires=[
-        "arrow",
+        "boto3",
         "bs4",
         "flask",
         "jinja2",
