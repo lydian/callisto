@@ -53,6 +53,9 @@ class SimplifiedS3ContentsManager:
     def is_folder(self, path):
         path = os.path.join(self.prefix, path)
         path = path.rstrip("/") + "/"
+        if path == "/":
+            path = ""
+
         r = self.client.list_objects(
             Bucket=self.bucket, Prefix=path, Delimiter="/", MaxKeys=1
         )

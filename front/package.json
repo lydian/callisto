@@ -6,7 +6,11 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "watch": "vue-cli-service build --watch"
+    "watch": "vue-cli-service build --watch",
+    "preinstall": "npx npm-force-resolutions"
+  },
+  "resolutions": {
+    "glob-parent": "^6.0.1"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.0",
