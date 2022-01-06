@@ -4,11 +4,6 @@
     <list-view v-else-if="this.type === 'directory'" :location="location" />
     <notebook-view v-else-if="this.type === 'notebook'" :location="location" />
     <file-view v-else-if="this.type === 'file'" :location="location" />
-    <div v-else class="d-flex justify-content-center">
-      <div class="spinner-border" role="status">
-        <span class="sr-only"></span>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -30,10 +25,12 @@ export default {
     if (this.location === "/") {
       this.location = "/<root>";
     }
+    var loader = this.$loading.show({ canCanel: false });
     axios
       .get("/api/info" + this.location)
       .then((response) => {
         this.type = response.data.type;
+        loader.hide();
       })
       .catch((errorInfo) => {
         console.log("here");

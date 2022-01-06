@@ -1,6 +1,12 @@
 <template>
   <div class="row">
-    <toc v-bind:content="this.toc" @clicked="goToAnchor" />
+    <div class="col-3 bg-light side">
+      <toc
+        style="height: 95vh"
+        v-bind:content="this.toc"
+        @clicked="goToAnchor"
+      />
+    </div>
     <div class="col-9">
       <div class="text-end">
         <a
@@ -64,3 +70,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.side {
+  height: 95vh;
+  padding-top: 15px;
+}
+</style>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-show="this.files">
     <div class="d-flex w-100 justify-content-end">
       <input
         ref="keyword"
@@ -7,11 +7,6 @@
         placeholder="filter file name"
         type="text"
       />
-    </div>
-    <div v-if="this.files === null">
-      <div class="spinner-border" role="status">
-        <span class="sr-only"></span>
-      </div>
     </div>
     <div id="list" class="list-group">
       <a
@@ -69,6 +64,10 @@ export default {
   },
   methods: {
     fetchList(reload_seconds) {
+      var loader = null;
+      if (this.files === null) {
+        loader = this.$loading.show({ canCanel: false });
+      }
       axios
         .get("/api/get" + this.location)
         .then((response) => {
@@ -83,10 +82,17 @@ export default {
           setTimeout(() => {
             this.fetchList(reload_seconds * 2);
           }, reload_seconds * 2 * 1000);
+        })
+        .finally(() => {
+          if (loader) {
+            loader.hide();
+          }
         });
     },
     readableTime(timeString) {
-      return moment(timeString).calendar(null, { sameElse: "YYYY-MM-DD" });
+      return timeString
+        ? moment(timeString).calendar(null, { sameElse: "YYYY-MM-DD" })
+        : "";
     },
   },
   beforeDestory() {

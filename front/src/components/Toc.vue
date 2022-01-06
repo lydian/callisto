@@ -1,5 +1,5 @@
 <template>
-  <div class="col-3 bg-light">
+  <div>
     <h5>Table of Contents</h5>
     <hr />
     <ul class="navbar-nav">
