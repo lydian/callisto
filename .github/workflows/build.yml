@@ -19,7 +19,10 @@ jobs:
       with:
         python-version: '3.10'
         architecture: 'x64'
+    - name: setup tox
+      run: pip install tox
     - name: Setup pip cache
+      uses: actions/cache@v2
       id: cache-venv
       with:
         path: ./venv/
@@ -32,8 +35,7 @@ jobs:
       if: steps.cache-venv.outputs.cache-hit != 'true'
 
     - name: Generate coverage report
-      run: |
-        ./venv/bin/pytest --cov=jupyterlab_hubshare/ --cov-report=xml tests/
+      run: tox --  --cov-report=xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v1
