@@ -11,7 +11,6 @@ from callisto.core.notebook import NotebookContent
 
 
 class TestLoader:
-
     @pytest.fixture
     def mock_import_module(self):
         with mock.patch("importlib.import_module") as m:
@@ -21,16 +20,16 @@ class TestLoader:
         config = mock.MagicMock(spec=Config)
         config.contents_manager_cls = "fake.module.FakeContentsManager"
         loader = Loader(config)
-        assert loader.contents_manager is mock_import_module.return_value.FakeContentsManager.return_value
+        assert (
+            loader.contents_manager
+            is mock_import_module.return_value.FakeContentsManager.return_value
+        )
         mock_import_module.return_value.FakeContentsManager.assert_called_once_with()
 
     def test_init_actual_class(self):
-
         class Dummy(ContentsManager):
-
             def __init__(self, **kwargs):
                 self.kwargs = kwargs
-
 
         config = mock.MagicMock(spec=Config)
         config.contents_manager_cls = Dummy
@@ -39,7 +38,6 @@ class TestLoader:
         loader = Loader(config)
         assert isinstance(loader.contents_manager, Dummy)
         assert loader.contents_manager.kwargs == {"foo": "bar"}
-
 
     @pytest.fixture
     def contents_manager(self):
@@ -61,12 +59,12 @@ class TestLoader:
     def test_get_fail_404(self, loader, contents_manager):
         contents_manager.get.side_effect = TornadoHTTPError(404, "file not found")
         with pytest.raises(FlaskHTTPExceptions.NotFound):
-            loader.get('/path/not-exist')
+            loader.get("/path/not-exist")
 
     def test_get_other(self, loader, contents_manager):
         contents_manager.get.side_effect = TornadoHTTPError(400, "Bad Request")
         with pytest.raises(FlaskHTTPExceptions.BadRequest):
-            loader.get('/bad-request')
+            loader.get("/bad-request")
 
     def test_info(self, loader, contents_manager):
         contents_manager.get.return_value = {"name": "filename"}

@@ -20,10 +20,10 @@ class Config:
     import_link_with_hubshare_preview: Optional[bool] = None
     import_link_func: Optional[Callable] = None
 
-
     def __post_init__(self):
         if self.contents_manager_cls is None:
             from jupyter_server.services.contents.filemanager import FileContentsManager
+
             self.contents_manager_cls = FileContentsManager
             self.contents_manager_kwargs = {"root_dir": os.getcwd()}
 

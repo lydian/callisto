@@ -1,4 +1,3 @@
-import os
 import base64
 
 from flask import Flask
@@ -6,7 +5,6 @@ from flask import render_template
 from flask import jsonify
 from flask import request
 from flask import Response
-from flask import abort
 from werkzeug.exceptions import HTTPException
 
 
@@ -15,6 +13,7 @@ from callisto.core.config_loader import Config
 
 
 app = Flask(__name__, static_folder="./built/static", template_folder="./built")
+
 
 def configure_app(config):
     global app
@@ -102,10 +101,6 @@ def import_nb(path):
 @app.errorhandler(HTTPException)
 def handle_exception(e):
     response = e.get_response()
-    output = jsonify({
-        "code": e.code,
-        "name": e.name,
-        "description": e.description
-    })
+    output = jsonify({"code": e.code, "name": e.name, "description": e.description})
     response.content_type = "application/json"
     return output, e.code

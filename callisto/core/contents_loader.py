@@ -22,10 +22,7 @@ class Loader:
         else:
             manager_class = config.contents_manager_cls
 
-        self.contents_manager = manager_class(
-            **(config.contents_manager_kwargs or {})
-        )
-
+        self.contents_manager = manager_class(**(config.contents_manager_kwargs or {}))
 
     def get(self, path: str, **kwargs) -> Dict[str, Any]:
         content = kwargs.pop("content", True)
@@ -42,5 +39,4 @@ class Loader:
 
     @lru_cache(10)
     def get_nb(self, path):
-        # type: (str) -> callisto.core.notebook.NotebookContent
         return NotebookContent(self, path)

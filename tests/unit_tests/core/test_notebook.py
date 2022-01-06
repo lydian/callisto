@@ -1,5 +1,4 @@
 from contextlib import contextmanager
-import contextlib
 from unittest import mock
 
 import pytest
@@ -9,7 +8,6 @@ from callisto.core.contents_loader import Loader
 
 
 class TestNotebookContent:
-
     @pytest.fixture
     def loader(self):
         return mock.MagicMock(spec=Loader)
@@ -42,45 +40,46 @@ class TestNotebookContent:
 
         loader.get.call_count == 2
 
-
     @contextmanager
     def mock_property(self, name, value):
         with mock.patch(
-            f'callisto.core.notebook.NotebookContent.{name}',
-            new_callable=mock.PropertyMock
+            f"callisto.core.notebook.NotebookContent.{name}",
+            new_callable=mock.PropertyMock,
         ) as m:
             m.return_value = value
             yield
 
     def test_dict_content(self, loader):
-        with self.mock_property('content', '{"test": 1}'):
-            notebook_content = NotebookContent(loader, '/path/file')
+        with self.mock_property("content", '{"test": 1}'):
+            notebook_content = NotebookContent(loader, "/path/file")
 
             assert notebook_content.content == '{"test": 1}'
             assert notebook_content.dict_content == {"test": 1}
 
     @pytest.fixture
     def mock_nb_reads(self):
-        with mock.patch('nbformat.reads') as m:
+        with mock.patch("nbformat.reads") as m:
             yield m
 
     @pytest.fixture
     def mock_html_exporter(self):
-        with mock.patch('callisto.core.notebook.HTMLExporter.from_notebook_node', autospec=True) as m:
+        with mock.patch(
+            "callisto.core.notebook.HTMLExporter.from_notebook_node", autospec=True
+        ) as m:
             m.return_value = "<html>content</html>", "others"
             yield m
 
     def test_html_content(self, loader, mock_nb_reads, mock_html_exporter):
-        with self.mock_property(
-            "content", "some-content"
-        ), self.mock_property("dict_content", {"nbformat": 4}):
-            notebook_content = NotebookContent(loader, '/some/path.ipynb')
+        with self.mock_property("content", "some-content"), self.mock_property(
+            "dict_content", {"nbformat": 4}
+        ):
+            notebook_content = NotebookContent(loader, "/some/path.ipynb")
             assert notebook_content.html_content == "<html>content</html>"
             mock_nb_reads.assert_called_once_with("some-content", as_version=4)
 
     @pytest.fixture
     def mock_soup(self):
-        with mock.patch('callisto.core.notebook.BeautifulSoup') as m:
+        with mock.patch("callisto.core.notebook.BeautifulSoup") as m:
             yield m.return_value
 
     def fake_heading(self, name, id, content):
@@ -89,8 +88,8 @@ class TestNotebookContent:
                 for key, value in kwargs.items():
                     setattr(self, key, value)
                     self[key] = value
-        return DummyHeading(name=name, id=id, contents=[content, "other-content"])
 
+        return DummyHeading(name=name, id=id, contents=[content, "other-content"])
 
     def test_toc(self, loader, mock_soup):
         with self.mock_property("html_content", "some-content"):
@@ -108,13 +107,8 @@ class TestNotebookContent:
                     "text": None,
                     "anchor": None,
                     "children": [
-                        {
-                            "level": 2,
-                            "text": "0.1",
-                            "anchor": "1",
-                            "children": []
-                        }
-                    ]
+                        {"level": 2, "text": "0.1", "anchor": "1", "children": []}
+                    ],
                 },
                 {
                     "level": 1,
@@ -140,27 +134,26 @@ class TestNotebookContent:
                                                     "level": 5,
                                                     "text": "1.1.0.0.1",
                                                     "anchor": "4",
-                                                    "children": []
+                                                    "children": [],
                                                 },
                                                 {
                                                     "level": 5,
                                                     "text": "1.1.0.0.2",
                                                     "anchor": "5",
-                                                    "children": []
-                                                }
-                                            ]
+                                                    "children": [],
+                                                },
+                                            ],
                                         },
                                         {
                                             "level": 4,
                                             "text": "1.1.0.1",
                                             "anchor": "6",
-                                            "children": []
-                                        }
-                                    ]
-
+                                            "children": [],
+                                        },
+                                    ],
                                 }
-                            ]
+                            ],
                         }
-                    ]
+                    ],
                 },
             ]

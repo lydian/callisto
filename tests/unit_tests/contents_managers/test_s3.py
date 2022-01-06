@@ -8,7 +8,6 @@ from callisto.contents_managers.s3 import SimplifiedS3ContentsManager
 
 
 class TestSimplifiedS3ContentsManager:
-
     @pytest.fixture
     def mock_session(self):
         with mock.patch("boto3.session.Session") as m:
@@ -19,7 +18,7 @@ class TestSimplifiedS3ContentsManager:
             aws_access_key_id="access_key_id",
             aws_secret_access_key="secret_access_key",
             bucket="test-bucket",
-            endpoint_url="http://example.com:3000/"
+            endpoint_url="http://example.com:3000/",
         )
         assert manager.client == mock_session.return_value.client.return_value
         assert manager.bucket == "test-bucket"
@@ -30,8 +29,7 @@ class TestSimplifiedS3ContentsManager:
             aws_secret_access_key="secret_access_key",
         )
         mock_session.return_value.client.assert_called_once_with(
-            service_name="s3",
-            endpoint_url="http://example.com:3000/"
+            service_name="s3", endpoint_url="http://example.com:3000/"
         )
 
     @pytest.fixture
@@ -44,11 +42,14 @@ class TestSimplifiedS3ContentsManager:
         )
         return manager
 
-    @pytest.mark.parametrize("path,is_folder",[
-        ("nested_folders", True),
-        ("test-notebook.ipynb", False),
-        ("not-exist", False),
-    ])
+    @pytest.mark.parametrize(
+        "path,is_folder",
+        [
+            ("nested_folders", True),
+            ("test-notebook.ipynb", False),
+            ("not-exist", False),
+        ],
+    )
     def test_is_folder(self, manager, path, is_folder):
         assert manager.is_folder(path) is is_folder
 
@@ -56,19 +57,22 @@ class TestSimplifiedS3ContentsManager:
         assert sorted(
             (item["name"], item["path"], item["type"])
             for item in manager.list_folder("")
-        ) == sorted([
-            ("test-notebook.ipynb", "test-notebook.ipynb", "notebook"),
-            ("nested_folders", "nested_folders", "directory")
-        ])
+        ) == sorted(
+            [
+                ("test-notebook.ipynb", "test-notebook.ipynb", "notebook"),
+                ("nested_folders", "nested_folders", "directory"),
+            ]
+        )
 
         assert sorted(
             (item["name"], item["path"], item["type"])
             for item in manager.list_folder("nested_folders")
-        ) == sorted([
-            ("callisto-256.png", "nested_folders/callisto-256.png", "file"),
-            ("data.csv", "nested_folders/data.csv", "file"),
-        ])
-
+        ) == sorted(
+            [
+                ("callisto-256.png", "nested_folders/callisto-256.png", "file"),
+                ("data.csv", "nested_folders/data.csv", "file"),
+            ]
+        )
 
     @pytest.fixture
     def mock_list_folder(self, manager):
@@ -103,14 +107,16 @@ class TestSimplifiedS3ContentsManager:
             "mimetype": "text/csv",
             "type": "file",
             "format": "text",
-            "writable": True
+            "writable": True,
         }
         for key, expected_value in expected_result.items():
             assert result[key] == expected_value
 
     @pytest.mark.parametrize("has_content", [True, False])
     def test_get_non_text_file(self, manager, has_content):
-        with open("tests/fixtures/notebooks/nested_folders/callisto-256.png", "rb") as f:
+        with open(
+            "tests/fixtures/notebooks/nested_folders/callisto-256.png", "rb"
+        ) as f:
             expected_content = base64.b64encode(f.read()).decode("ascii")
 
         result = manager.get("nested_folders/callisto-256.png", content=has_content)
@@ -122,7 +128,7 @@ class TestSimplifiedS3ContentsManager:
             "mimetype": "image/png",
             "type": "file",
             "format": "base64",
-            "writable": True
+            "writable": True,
         }
         for key, expected_value in expected_result.items():
             assert result[key] == expected_value
@@ -141,7 +147,7 @@ class TestSimplifiedS3ContentsManager:
             "mimetype": None,
             "type": "notebook",
             "format": "json",
-            "writable": True
+            "writable": True,
         }
         for key, expected_value in expected_result.items():
             assert result[key] == expected_value

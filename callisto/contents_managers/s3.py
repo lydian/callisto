@@ -19,18 +19,15 @@ class SimplifiedS3ContentsManager:
     """
 
     avaiable_boto3_session_arg_names = [
-        'aws_access_key_id',
-        'aws_secret_access_key',
-        'aws_session_token',
-        'region_name',
-        'endpoint_url',
-        'profile_name',
+        "aws_access_key_id",
+        "aws_secret_access_key",
+        "aws_session_token",
+        "region_name",
+        "endpoint_url",
+        "profile_name",
     ]
 
-    available_s3_arg_names = [
-        "bucket",
-        "prefix"
-    ]
+    available_s3_arg_names = ["bucket", "prefix"]
 
     def __init__(self, bucket, prefix=None, **kwargs):
         self.session_kwargs = {
@@ -41,7 +38,6 @@ class SimplifiedS3ContentsManager:
 
         self.bucket = bucket
         self.prefix = prefix or ""
-
 
     @property
     def client(self):
@@ -54,11 +50,12 @@ class SimplifiedS3ContentsManager:
         )
         return client
 
-
     def is_folder(self, path):
         path = os.path.join(self.prefix, path)
         path = path.rstrip("/") + "/"
-        r = self.client.list_objects(Bucket=self.bucket, Prefix=path, Delimiter='/', MaxKeys=1)
+        r = self.client.list_objects(
+            Bucket=self.bucket, Prefix=path, Delimiter="/", MaxKeys=1
+        )
         return "Contents" in r
 
     def list_folder(self, path):
@@ -71,9 +68,7 @@ class SimplifiedS3ContentsManager:
             Bucket=self.bucket,
             Delimiter="/",
             Prefix=prefix,
-            PaginationConfig={
-                "PageSize": 1000
-            }
+            PaginationConfig={"PageSize": 1000},
         )
         for data in page_iterator:
             contents = data.get("Contents")
@@ -86,14 +81,20 @@ class SimplifiedS3ContentsManager:
                         result.append(
                             {
                                 "name": name,
-                                "path": str(pathlib.Path(content["Key"]).relative_to(self.prefix)),
+                                "path": str(
+                                    pathlib.Path(content["Key"]).relative_to(
+                                        self.prefix
+                                    )
+                                ),
                                 "writable": True,
                                 "last_modified": content["LastModified"],
                                 "created": content["LastModified"],
                                 "content": None,
                                 "format": None,
                                 "mimetype": None,
-                                "type": "notebook" if name.endswith(".ipynb") else "file",
+                                "type": "notebook"
+                                if name.endswith(".ipynb")
+                                else "file",
                             }
                         )
             common_prefixes = data.get("CommonPrefixes")
@@ -103,14 +104,18 @@ class SimplifiedS3ContentsManager:
                     result.append(
                         {
                             "name": name,
-                            "path": str(pathlib.Path(common_prefix["Prefix"]).relative_to(self.prefix)),
+                            "path": str(
+                                pathlib.Path(common_prefix["Prefix"]).relative_to(
+                                    self.prefix
+                                )
+                            ),
                             "writable": True,
                             "last_modified": None,
                             "created": None,
                             "content": None,
                             "format": None,
                             "mimetype": None,
-                            "type": "directory"
+                            "type": "directory",
                         }
                     )
         return result
@@ -128,8 +133,7 @@ class SimplifiedS3ContentsManager:
                     "content": self.list_folder(path) if content else None,
                     "format": "json",
                     "mimetype": None,
-                    "type": "directory"
-
+                    "type": "directory",
                 }
 
             key = str(pathlib.Path(self.prefix) / path)
@@ -146,7 +150,7 @@ class SimplifiedS3ContentsManager:
                     "content": None if not content else c,
                     "format": "json",
                     "mimetype": None,
-                    "type": "notebook"
+                    "type": "notebook",
                 }
 
             mimetype, _ = mimetypes.guess_type(name)
@@ -156,7 +160,9 @@ class SimplifiedS3ContentsManager:
                 format_ = "text"
             else:
                 format_ = "base64"
-                content_s = base64.b64encode(content_s).decode('ascii') if content else None
+                content_s = (
+                    base64.b64encode(content_s).decode("ascii") if content else None
+                )
 
             return {
                 "name": name,

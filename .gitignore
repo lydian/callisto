@@ -5,6 +5,7 @@ dist/*
 .cache/
 build/
 .coverage
+coverage.xml
 
 # Editor directories and files
 .idea

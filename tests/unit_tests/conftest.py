@@ -25,12 +25,12 @@ def env():
 @pytest.fixture(scope="session")
 def set_s3(env, bucket):
     with mock_s3():
-        client = boto3.client('s3', region_name='us-east-1')
+        client = boto3.client("s3", region_name="us-east-1")
         upload_fixture_to_s3(client)
         yield
 
 
 @pytest.fixture
 def s3(set_s3):
-    client = boto3.client('s3', region_name='us-east-1')
+    client = boto3.client("s3", region_name="us-east-1")
     yield client

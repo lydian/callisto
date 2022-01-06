@@ -6,7 +6,6 @@ from unittest import mock
 import pytest
 from werkzeug.exceptions import NotFound
 
-import callisto.app
 from callisto.app import app
 from callisto.app import configure_app
 
@@ -41,10 +40,10 @@ def test_index_success(client, path):
     assert client.get(path).status_code == 200
 
 
-@pytest.mark.parametrize("path,expected_search_path", [
-    ("/api/info/<root>", ""),
-    ("/api/info/some/path", "some/path")
-])
+@pytest.mark.parametrize(
+    "path,expected_search_path",
+    [("/api/info/<root>", ""), ("/api/info/some/path", "some/path")],
+)
 def test_info(client, mock_loader, path, expected_search_path):
     mock_loader.info.return_value = {"some": "value"}
     r = client.get(path)
@@ -53,39 +52,37 @@ def test_info(client, mock_loader, path, expected_search_path):
     mock_loader.info.assert_called_once_with(expected_search_path)
 
 
-@pytest.mark.parametrize("path,expected_search_path", [
-    ("/api/get/<root>", ""),
-    ("/api/get/some/path", "some/path")
-])
+@pytest.mark.parametrize(
+    "path,expected_search_path",
+    [("/api/get/<root>", ""), ("/api/get/some/path", "some/path")],
+)
 def test_list(client, mock_loader, path, expected_search_path):
     def make_item(type_, name):
-        return {
-            "type": type_,
-            "name": name
-        }
+        return {"type": type_, "name": name}
+
     folders = [make_item("directory", f"d_{i}") for i in range(5)]
     files = [make_item("file", f"f_{i}") for i in range(3)]
     items = folders + files
     random.shuffle(items)
-    mock_loader.get.return_value = {
-        "type": "directory",
-        "content": items
-    }
+    mock_loader.get.return_value = {"type": "directory", "content": items}
     r = client.get(path)
     assert r.status_code == 200
     contents = json.loads(r.data)
     assert contents["content"] == folders + files
     mock_loader.get.assert_called_once_with(expected_search_path)
 
+
 @pytest.mark.parametrize("is_download", [True, False])
 @pytest.mark.parametrize("is_base64", [True, False])
 def test_raw_base64(client, mock_loader, is_download, is_base64):
-    content = base64.encodebytes(b"some-value").decode("ascii") if is_base64 else "some-value"
+    content = (
+        base64.encodebytes(b"some-value").decode("ascii") if is_base64 else "some-value"
+    )
     mock_loader.get.return_value = {
         "format": "base64" if is_base64 else "text",
         "content": content,
         "mimetype": "text/txt",
-        "name": "file.txt"
+        "name": "file.txt",
     }
     path = "/api/raw/some/file.txt" + ("?download=1" if is_download else "")
     r = client.get(path)
@@ -108,7 +105,7 @@ def test_render_nb(client, mock_loader):
     mock_loader.get_nb.return_value.html_content = "html"
     r = client.get("/api/notebook/render/some/notebook.ipynb")
     assert r.status_code == 200
-    assert r.data == b'html'
+    assert r.data == b"html"
     mock_loader.get_nb.assert_called_once_with("some/notebook.ipynb")
 
 
@@ -125,18 +122,17 @@ def test_import_nb(client, mock_config, use_link_func, with_hub_share):
 
     if with_hub_share:
         mock_config.import_link_with_hubshare_preview = True
-        expected_url = (
-            b"/user-redirect/?hubshare-preview=" +
-            base64.b64encode(expected_path.encode("utf-8"))
+        expected_url = b"/user-redirect/?hubshare-preview=" + base64.b64encode(
+            expected_path.encode("utf-8")
         )
     else:
         mock_config.import_link_with_hubshare_preview = None
         expected_url = f"/user-redirect/lab/tree/{expected_path}".encode("utf-8")
 
-
     r = client.get("/api/notebook/import/some/notebook.ipynb")
     assert r.status_code == 200
     assert r.data == b"https://example.com" + expected_url
+
 
 def test_import_nb_without_base_url(client, mock_config):
     mock_config.jupyterhub_base_url = ""

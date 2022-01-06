@@ -22,7 +22,7 @@ setup(
         "pycrypto",
         "click",
         "more_click",
-        "jupyter-server"
+        "jupyter-server",
     ],
     entry_points={"console_scripts": ["callisto = cli:cli"]},
 )
