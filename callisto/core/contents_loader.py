@@ -8,14 +8,14 @@ from tornado.web import HTTPError as TornadoHTTPError
 from werkzeug.exceptions import BadRequest
 from werkzeug.exceptions import NotFound
 
-from callisto.core.config_loader import Config
-from callisto.core.notebook import NotebookContent
+from callisto.core.callisto_config import CallistoConfig
+from callisto.core.notebook_content import NotebookContent
 
 
-class Loader:
+class ContentsLoader:
     contents_manager: ContentsManager
 
-    def __init__(self, config: Config) -> None:
+    def __init__(self, config: CallistoConfig) -> None:
         if isinstance(config.contents_manager_cls, str):
             module_name, cls_name = config.contents_manager_cls.rsplit(".", 1)
             manager_class = getattr(importlib.import_module(module_name), cls_name)

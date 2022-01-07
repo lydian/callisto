@@ -12,13 +12,13 @@ from callisto.app import configure_app
 
 @pytest.fixture
 def mock_loader():
-    with mock.patch("callisto.app.Loader") as m:
+    with mock.patch("callisto.app.ContentsLoader") as m:
         yield m.return_value
 
 
 @pytest.fixture
 def mock_config():
-    with mock.patch("callisto.app.Config") as m:
+    with mock.patch("callisto.app.CallistoConfig") as m:
         yield m.load_from_config_file.return_value
 
 
@@ -35,7 +35,7 @@ def client(mock_loader, mock_config):
         yield c
 
 
-@pytest.mark.parametrize("path", ["/", "/some/path"])
+@pytest.mark.parametrize("path", ["/", "/some/path", "/private/path"])
 def test_index_success(client, path):
     assert client.get(path).status_code == 200
 
@@ -114,7 +114,7 @@ def test_render_nb(client, mock_loader):
 def test_import_nb(client, mock_config, use_link_func, with_hub_share):
     mock_config.jupyterhub_base_url = "https://example.com/"
     if use_link_func:
-        mock_config.import_link_func = lambda x: "prefix/" + x
+        mock_config.import_link_func = lambda x, _: "prefix/" + x
         expected_path = "prefix/some/notebook.ipynb"
     else:
         mock_config.import_link_func = None

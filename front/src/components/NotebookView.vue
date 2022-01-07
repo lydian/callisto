@@ -41,23 +41,32 @@ import Toc from "./Toc.vue";
 
 export default {
   name: "NotebookView",
-  props: ["location"],
+  props: ["location", "private"],
   components: { Toc },
   data() {
     return { html: null, toc: null, importURL: null };
   },
   created() {
     var loader = this.$loading.show({ canCanel: false });
-    axios.get("/api/notebook/import" + this.location).then((response) => {
+    var importAPI = this.private
+      ? "/api/notebook/private-import"
+      : "/api/notebook/import";
+    axios.get(importAPI + this.location).then((response) => {
       this.importURL = response.data;
     });
 
-    axios.get("/api/notebook/toc" + this.location).then((response) => {
+    var tocAPI = this.private
+      ? "/api/notebook/private-toc"
+      : "/api/notebook/toc";
+    axios.get(tocAPI + this.location).then((response) => {
       this.toc = response.data;
       this.hideLoading(loader);
     });
 
-    axios.get("/api/notebook/render" + this.location).then((response) => {
+    var renderAPI = this.private
+      ? "/api/notebook/private-render"
+      : "/api/notebook/render";
+    axios.get(renderAPI + this.location).then((response) => {
       this.html = response.data;
       this.hideLoading(loader);
     });

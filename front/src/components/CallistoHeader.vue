@@ -17,17 +17,11 @@
         <span class="fs-4">Callisto</span>
       </a>
     </header>
-    <div class="container">
-      <Breadcrump></Breadcrump>
-    </div>
   </div>
 </template>
 
 <script>
-import Breadcrump from "./Breadcrump.vue";
-
 export default {
   name: "CallistoHeader",
-  components: { Breadcrump },
 };
 </script>

@@ -28,7 +28,30 @@ import_link_with_hubshare_preview = True
 # notebook server
 
 
-import_link_func: Callable[[str], str] = lambda path: "prefix/" + path
+import_link_func: Callable[[str, bool], str] = (
+    lambda path, private: "prefix/" + path if not private else "private/prefix/" + path
+)
 # [Optional] `import_link_func` is a function in that takes the current path as an
 # input. You can do any magic to update the final path in case the path on the site
 # is different from the path on jupyterhub.
+
+
+private_contents_manager_cls = (
+    "callisto.contents_managers.s3.SimplifiedS3ContentsManager"
+)
+# [Optional] `private_contents_manager_cls` Add this option if you have notebook that
+# should not be disscoverable but still want to allow people with link to view it.
+
+private_contents_manager_kwargs = {
+    "bucket": "test-bucket",
+    "access_key_id": "testing",
+    "secret_access_key": "testing",
+    "endpoint_url": "http://localhost:3000",
+}
+# [Optional] the kwargs for private contents manager
+
+private_link_encrypt_key = b"MPQkJL_w4wKx1HJQRdII6pBRQOTPiuzcAPfACjZORNI="
+# [Optional] `private_link_encrypt_key` use this link to encrypt path, so that
+# it is not discoverable
+# The key is generated via
+# `from cryptography.fernet import Fernet; Fernet.generate_key()`

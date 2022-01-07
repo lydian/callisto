@@ -5,9 +5,9 @@ from jupyter_server.services.contents.manager import ContentsManager
 from tornado.web import HTTPError as TornadoHTTPError
 from werkzeug import exceptions as FlaskHTTPExceptions
 
-from callisto.core.contents_loader import Loader
-from callisto.core.config_loader import Config
-from callisto.core.notebook import NotebookContent
+from callisto.core.contents_loader import ContentsLoader
+from callisto.core.callisto_config import CallistoConfig
+from callisto.core.notebook_content import NotebookContent
 
 
 class TestLoader:
@@ -17,9 +17,9 @@ class TestLoader:
             yield m
 
     def test_init_str_class(self, mock_import_module):
-        config = mock.MagicMock(spec=Config)
+        config = mock.MagicMock(spec=CallistoConfig)
         config.contents_manager_cls = "fake.module.FakeContentsManager"
-        loader = Loader(config)
+        loader = ContentsLoader(config)
         assert (
             loader.contents_manager
             is mock_import_module.return_value.FakeContentsManager.return_value
@@ -31,11 +31,11 @@ class TestLoader:
             def __init__(self, **kwargs):
                 self.kwargs = kwargs
 
-        config = mock.MagicMock(spec=Config)
+        config = mock.MagicMock(spec=CallistoConfig)
         config.contents_manager_cls = Dummy
         config.contents_manager_kwargs = {"foo": "bar"}
 
-        loader = Loader(config)
+        loader = ContentsLoader(config)
         assert isinstance(loader.contents_manager, Dummy)
         assert loader.contents_manager.kwargs == {"foo": "bar"}
 
@@ -45,7 +45,7 @@ class TestLoader:
 
     @pytest.fixture
     def loader(self, mock_import_module, contents_manager):
-        loader = Loader(mock.MagicMock(spec=Config))
+        loader = ContentsLoader(mock.MagicMock(spec=CallistoConfig))
         loader.contents_manager = contents_manager
         return loader
 
