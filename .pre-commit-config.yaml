@@ -18,6 +18,15 @@ repos:
         types_or: [javascript, vue]
         additional_dependencies:
         -   eslint-plugin-vue@v7.5.0
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v0.930'
+    hooks:
+    -   id: mypy
+        files: 'callisto/*'
+        args:
+            - --disallow-untyped-call
+            - --ignore-missing-imports
+            # - --disallow-untyped-defs
 -   repo: local
     hooks:
     -   id: pytest

@@ -25,8 +25,8 @@ class NotebookContent:
         self.loader = loader
 
     @property
-    def content(self) -> str:
-        def fetch():
+    def content(self) -> Optional[str]:
+        def fetch() -> None:
             content = self.loader.get(self.path, type="file")
             self._content = content["content"]
             self._last_modified = content["last_modified"]
@@ -45,7 +45,7 @@ class NotebookContent:
     @property
     def dict_content(self) -> Dict[str, Any]:
         if self._dict_content is None:
-            self._dict_content = json.loads(self.content)
+            self._dict_content = json.loads(str(self.content))
         return self._dict_content
 
     @property

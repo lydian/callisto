@@ -1,3 +1,4 @@
+from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
@@ -34,7 +35,7 @@ class TocNode:
         children = ",".join([str(c) for c in self.children])
         return f"L{self.level} Node(children=[{children}])"
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "level": self.level,
             "text": self.text,

@@ -1,4 +1,5 @@
-import importlib
+import importlib.util
+import importlib.machinery
 import os
 from typing import Any
 from typing import Union
@@ -15,7 +16,7 @@ from jupyter_server.services.contents.manager import ContentsManager
 class Config:
 
     contents_manager_cls: Optional[Union[str, Type[ContentsManager]]] = None
-    contents_manager_kwargs: Dict[str, Any] = None
+    contents_manager_kwargs: Optional[Dict[str, Any]] = None
     jupyterhub_base_url: Optional[str] = None
     import_link_with_hubshare_preview: Optional[bool] = None
     import_link_func: Optional[Callable] = None
@@ -37,7 +38,7 @@ class Config:
         print(f"Loading config from path `{config_path}`")
         loader = importlib.machinery.SourceFileLoader("config", config_path)
         spec = importlib.util.spec_from_loader("config", loader)
-        config = importlib.util.module_from_spec(spec)
+        config = importlib.util.module_from_spec(spec)  # type: ignore
         loader.exec_module(config)
         kwargs = {
             key: getattr(config, key)

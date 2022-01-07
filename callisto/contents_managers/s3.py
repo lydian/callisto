@@ -2,6 +2,9 @@ import base64
 import os
 import pathlib
 import mimetypes
+from typing import Any
+from typing import Dict
+from typing import Optional
 
 import boto3
 from botocore.exceptions import ClientError
@@ -29,7 +32,9 @@ class SimplifiedS3ContentsManager:
 
     available_s3_arg_names = ["bucket", "prefix"]
 
-    def __init__(self, bucket, prefix=None, **kwargs):
+    def __init__(
+        self, bucket: str, prefix: Optional[str] = None, **kwargs: Dict[str, Any]
+    ) -> None:
         self.session_kwargs = {
             key: kwargs[key]
             for key in self.avaiable_boto3_session_arg_names

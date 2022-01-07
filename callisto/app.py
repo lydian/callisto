@@ -1,4 +1,5 @@
 import base64
+from typing import Optional
 
 from flask import Flask
 from flask import render_template
@@ -15,7 +16,7 @@ from callisto.core.config_loader import Config
 app = Flask(__name__, static_folder="./built/static", template_folder="./built")
 
 
-def configure_app(config):
+def configure_app(config: Optional[str]) -> Flask:
     global app
     app.logger.info(f"configure_app using config: {config}")
     app.callisto_config = Config.load_from_config_file(config)
@@ -96,6 +97,11 @@ def import_nb(path):
         )
 
     return base_url + "/user-redirect/lab/tree/" + path
+
+
+@app.route("/api/private/<path:path>")
+def private_link(path: str) -> str:
+    return ""
 
 
 @app.errorhandler(HTTPException)
