@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/ambv/black
-    rev: stable
+    rev: 21.12b0
     hooks:
     - id: black
       language_version: python3.10
@@ -9,3 +9,21 @@ repos:
     hooks:
     - id: flake8
       args: ['--max-line-length', '88']
+
+-   repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 'v8.6.0'
+    hooks:
+    -   id: eslint
+        files: 'front/*'
+        types_or: [javascript, vue]
+        additional_dependencies:
+        -   eslint-plugin-vue@v7.5.0
+-   repo: local
+    hooks:
+    -   id: pytest
+        name: test
+        entry: /usr/bin/make test
+        language: script
+        pass_filenames: false
+        files: 'callisto/*'
+        always_run: true
