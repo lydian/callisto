@@ -1,35 +1,38 @@
 <template>
-  <div v-show="this.files">
-    <div class="d-flex w-100 justify-content-end">
-      <input
-        ref="keyword"
-        v-model="keyword"
-        placeholder="filter file name"
-        type="text"
-      />
-    </div>
-    <div id="list" class="list-group">
-      <a
-        v-for="item in matchedFiles"
-        :key="item.name"
-        v-bind:href="'/' + item.path"
-        class="list-group-item list-group-item-action"
-        role="tabpanel"
-      >
-        <div class="d-flex w-100 justify-content-between">
-          <span class="mb-1">
-            <!-- folder icon -->
-            <span v-if="item.type === 'directory'">&#128193;</span>
-            <!-- notebook icon -->
-            <span v-else-if="item.type === 'notebook'">&#128221;</span>
-            <!-- File icon -->
-            <span v-else>&#128196;</span>
+  <div>
+    <error-view :error="error" />
+    <div v-show="this.files">
+      <div class="d-flex w-100 justify-content-end">
+        <input
+          ref="keyword"
+          v-model="keyword"
+          placeholder="filter file name"
+          type="text"
+        />
+      </div>
+      <div id="list" class="list-group">
+        <a
+          v-for="item in matchedFiles"
+          :key="item.name"
+          v-bind:href="'/' + item.path"
+          class="list-group-item list-group-item-action"
+          role="tabpanel"
+        >
+          <div class="d-flex w-100 justify-content-between">
+            <span class="mb-1">
+              <!-- folder icon -->
+              <span v-if="item.type === 'directory'">&#128193;</span>
+              <!-- notebook icon -->
+              <span v-else-if="item.type === 'notebook'">&#128221;</span>
+              <!-- File icon -->
+              <span v-else>&#128196;</span>
 
-            <span>&nbsp;&nbsp;{{ item.name }}</span>
-          </span>
-          <small>{{ readableTime(item.last_modified) }}</small>
-        </div>
-      </a>
+              <span>&nbsp;&nbsp;{{ item.name }}</span>
+            </span>
+            <small>{{ readableTime(item.last_modified) }}</small>
+          </div>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -37,18 +40,18 @@
 <script>
 import axios from "axios";
 import moment from "moment";
+import ErrorView from "./ErrorView.vue";
 
 export default {
+  components: { ErrorView },
   name: "ListView",
   props: ["location"],
+  componenets: { ErrorView },
   data() {
-    return { files: null, keyword: "" };
+    return { files: null, keyword: "", error: null };
   },
   created() {
     this.fetchList(3);
-  },
-  mounted() {
-    this.$refs.keyword.focus();
   },
   computed: {
     matchedFiles: {
@@ -71,12 +74,14 @@ export default {
       axios
         .get("/api/get" + this.location)
         .then((response) => {
+          this.error = null;
           this.files = response.data.content;
           setTimeout(() => {
             this.fetchList(reload_seconds);
           }, reload_seconds * 1000);
         })
         .catch((error) => {
+          this.error = error;
           console.log(error.toJSON());
 
           setTimeout(() => {
@@ -86,6 +91,7 @@ export default {
         .finally(() => {
           if (loader) {
             loader.hide();
+            this.$refs.keyword.focus();
           }
         });
     },

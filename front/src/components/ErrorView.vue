@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="error">
     <div class="alert alert-danger">
       <strong>{{ error.code }} {{ error.name }}</strong>
       {{ error.message }}

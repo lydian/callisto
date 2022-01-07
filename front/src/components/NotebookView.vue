@@ -28,7 +28,7 @@
         style="width: 100%; min-height: 95vh"
         id="notebook"
         ref="notebook"
-        :src="'/api/notebook/render' + this.location"
+        :srcdoc="html"
         @load="load"
       ></iframe>
     </div>
@@ -47,11 +47,19 @@ export default {
     return { html: null, toc: null, importURL: null };
   },
   created() {
+    var loader = this.$loading.show({ canCanel: false });
     axios.get("/api/notebook/import" + this.location).then((response) => {
       this.importURL = response.data;
     });
+
     axios.get("/api/notebook/toc" + this.location).then((response) => {
       this.toc = response.data;
+      this.hideLoading(loader);
+    });
+
+    axios.get("/api/notebook/render" + this.location).then((response) => {
+      this.html = response.data;
+      this.hideLoading(loader);
     });
   },
   methods: {
@@ -65,6 +73,11 @@ export default {
       var hash = window.location.hash;
       if (hash) {
         this.goToAnchor(hash.slice(1));
+      }
+    },
+    hideLoading(loader) {
+      if (this.html && this.toc) {
+        loader.hide();
       }
     },
   },
