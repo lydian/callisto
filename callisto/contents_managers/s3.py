@@ -64,7 +64,7 @@ class SimplifiedS3ContentsManager:
         r = self.client.list_objects(
             Bucket=self.bucket, Prefix=path, Delimiter="/", MaxKeys=1
         )
-        return "Contents" in r
+        return "Contents" in r or "CommonPrefixes" in r
 
     def list_folder(self, path):
         prefix = os.path.join(self.prefix, path).rstrip("/") + "/"

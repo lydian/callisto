@@ -65,7 +65,7 @@ class NotebookContent:
         headings: List[TocNode] = [
             TocNode(
                 int(item.name.replace("h", "")),
-                item.contents[0],
+                item.contents[0].text,
                 item["id"],
             )
             for item in soup.find_all(["h1", "h2", "h3", "h4", "h5"])

@@ -11,7 +11,7 @@
           >{{ h1.text }}</a
         >
         <ul v-if="h1.children">
-          <li v-for="h2 in h1.children" :key="h2.anchor">
+          <li v-for="h2 in h1.children" :key="h2.anchor" class="nav-item">
             <a
               :href="'#' + h2.anchor"
               v-if="h2.text"
@@ -19,7 +19,7 @@
               >{{ h2.text }}</a
             >
             <ul v-if="h2.children">
-              <li v-for="h3 in h2.children" :key="h3.anchor">
+              <li v-for="h3 in h2.children" :key="h3.anchor" class="nav-item">
                 <a
                   :href="'#' + h3.anchor"
                   v-if="h3.text"
@@ -27,7 +27,11 @@
                   >{{ h3.text }}</a
                 >
                 <ul v-if="h3.children">
-                  <li v-for="h4 in h3.children" :key="h4.anchor">
+                  <li
+                    v-for="h4 in h3.children"
+                    :key="h4.anchor"
+                    class="nav-item"
+                  >
                     <a
                       :href="'#' + h4.anchor"
                       v-if="h4.text"
@@ -35,7 +39,11 @@
                       >{{ h4.text }}</a
                     >
                     <ul v-if="h4.children">
-                      <li v-for="h5 in h4.children" :key="h5.anchor">
+                      <li
+                        v-for="h5 in h4.children"
+                        :key="h5.anchor"
+                        class="nav-item"
+                      >
                         <a
                           :href="'#' + h5.anchor"
                           v-if="h5.text"

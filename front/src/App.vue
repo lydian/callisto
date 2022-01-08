@@ -1,17 +1,15 @@
 <template>
   <div>
-    <callisto-header />
     <view-chooser />
   </div>
 </template>
 
 <script>
-import CallistoHeader from "./components/CallistoHeader.vue";
 import ViewChooser from "./components/ViewChooser.vue";
 
 export default {
   name: "App",
-  components: { CallistoHeader, ViewChooser },
+  components: { ViewChooser },
 };
 </script>
 

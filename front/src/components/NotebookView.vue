@@ -1,5 +1,6 @@
 <template>
   <div class="row">
+    <error-view v-if="error" :error="error" />
     <div class="col-3 bg-light side">
       <toc
         style="height: 95vh"
@@ -38,13 +39,14 @@
 <script>
 import axios from "axios";
 import Toc from "./Toc.vue";
+import ErrorView from "./ErrorView.vue";
 
 export default {
   name: "NotebookView",
   props: ["location", "private"],
-  components: { Toc },
+  components: { Toc, ErrorView },
   data() {
-    return { html: null, toc: null, importURL: null };
+    return { html: null, toc: null, importURL: null, error: null };
   },
   created() {
     var loader = this.$loading.show({ canCanel: false });
@@ -58,18 +60,27 @@ export default {
     var tocAPI = this.private
       ? "/api/notebook/private-toc"
       : "/api/notebook/toc";
-    axios.get(tocAPI + this.location).then((response) => {
-      this.toc = response.data;
-      this.hideLoading(loader);
-    });
+    axios
+      .get(tocAPI + this.location)
+      .then((response) => {
+        this.toc = response.data;
+      })
+      .catch((error) => {
+        this.error = error;
+      });
 
     var renderAPI = this.private
       ? "/api/notebook/private-render"
       : "/api/notebook/render";
-    axios.get(renderAPI + this.location).then((response) => {
-      this.html = response.data;
-      this.hideLoading(loader);
-    });
+    axios
+      .get(renderAPI + this.location)
+      .then((response) => {
+        this.html = response.data;
+        loader.hide();
+      })
+      .catch((error) => {
+        this.error = error;
+      });
   },
   methods: {
     goToAnchor(anchor) {
@@ -84,11 +95,6 @@ export default {
         this.goToAnchor(hash.slice(1));
       }
     },
-    hideLoading(loader) {
-      if (this.html && this.toc) {
-        loader.hide();
-      }
-    },
   },
 };
 </script>
@@ -97,5 +103,9 @@ export default {
 .side {
   height: 95vh;
   padding-top: 15px;
+}
+#notebook {
+  overflow-x: auto;
+  overflow-y: auto;
 }
 </style>

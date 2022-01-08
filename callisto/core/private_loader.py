@@ -1,6 +1,7 @@
 import base64
 from typing import Any
 from typing import Dict
+from typing import Optional
 
 from cryptography.fernet import Fernet
 
@@ -10,7 +11,7 @@ from callisto.core.callisto_config import CallistoConfig
 
 class PrivateLoader(ContentsLoader):
 
-    encrypt_key: bytes
+    encrypt_key: Optional[bytes]
 
     def __init__(self, config: CallistoConfig) -> None:
         private_config = CallistoConfig(
@@ -20,12 +21,15 @@ class PrivateLoader(ContentsLoader):
             ),
         )
         super().__init__(private_config)
-        if config.private_link_encrypt_key is None:
+        if (
+            config.private_contents_manager_cls is not None
+            and config.private_link_encrypt_key is None
+        ):
             raise ValueError(
                 "Missing either `private_link_encrypt_key` in config or "
                 "`PRIVATE_LINK_ENCRYPT_KEY` in environment variable"
             )
-        self.encrypt_key = config.private_link_encrypt_key
+        self.encrypt_key = getattr(config, "private_link_encrypt_key", None)
 
     def resolve_path(self, encrypted_path: str):
         f = Fernet(self.encrypt_key)

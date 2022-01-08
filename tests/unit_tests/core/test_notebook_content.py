@@ -85,10 +85,10 @@ class TestNotebookContent:
 
     def fake_heading(self, name, id, content):
         class DummyHeading(dict):
-            def __init__(self, **kwargs):
-                for key, value in kwargs.items():
-                    setattr(self, key, value)
-                    self[key] = value
+            def __init__(self, name: str, contents: str, id: int) -> None:
+                self.name = name
+                self["id"] = id
+                self.contents = [mock.MagicMock(text=content)]
 
         return DummyHeading(name=name, id=id, contents=[content, "other-content"])
 
