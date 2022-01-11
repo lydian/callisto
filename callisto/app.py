@@ -89,7 +89,7 @@ def render_nb(path, private=False):
 @app.route("/api/notebook/private-import/<path:path>", defaults={"private": True})
 @app.route("/api/notebook/import/<path:path>")
 def import_nb(path, private=False):
-    base_url = getattr(app.callisto_config, "jupyterhub_base_url", "").rstrip("/")
+    base_url = (app.callisto_config.jupyterhub_base_url or "").rstrip("/")
     if not base_url:
         return ""
 
