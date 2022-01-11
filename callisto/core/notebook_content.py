@@ -6,6 +6,7 @@ from typing import Optional
 
 import nbformat
 from bs4 import BeautifulSoup
+from cssutils import parseStyle
 from nbconvert.exporters import HTMLExporter
 
 from callisto.core.toc import TocNode
@@ -57,7 +58,12 @@ class NotebookContent:
                 self.content, as_version=self.dict_content["nbformat"]
             )
             html, _ = html_exporter.from_notebook_node(notebook_node)
-            self._html_content = html
+            soup = BeautifulSoup(html, "html.parser")
+            for elem in soup.find_all(class_="CodeMirror"):
+                style = parseStyle(elem.get("style", ""))
+                style["overflow-x"] = "auto"
+                elem["style"] = style.cssText
+            self._html_content = str(soup)
         return self._html_content
 
     def toc(self) -> List[Any]:

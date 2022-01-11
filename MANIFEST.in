@@ -1,2 +1,5 @@
 graft callisto/built
 global-exclude *.pyc
+include README.md
+include LICENSE
+include front/package.json

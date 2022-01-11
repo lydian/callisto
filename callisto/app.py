@@ -65,7 +65,7 @@ def raw(path, private=False):
         if download
         else {}
     )
-    if content["mimetype"].startswith("text/"):
+    if content.get("mimetype", "").startswith("text/"):
         content["mimetype"] = "text/plain"
     return Response(content["content"], mimetype=content["mimetype"], **kwargs)
 

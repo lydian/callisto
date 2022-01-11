@@ -76,11 +76,11 @@ export default {
       .get(renderAPI + this.location)
       .then((response) => {
         this.html = response.data;
-        loader.hide();
       })
       .catch((error) => {
         this.error = error;
-      });
+      })
+      .finally(loader.hide());
   },
   methods: {
     goToAnchor(anchor) {
@@ -103,9 +103,5 @@ export default {
 .side {
   height: 95vh;
   padding-top: 15px;
-}
-#notebook {
-  overflow-x: auto;
-  overflow-y: auto;
 }
 </style>
