@@ -93,6 +93,16 @@ def test_raw_base64(client, mock_loader, is_download, is_base64):
         r.data == content
 
 
+@pytest.mark.parametrize("has_mimetype", [True, False])
+def test_raw_notebook(client, mock_loader, has_mimetype):
+    mock_notebook = {"format": "json", "content": "content", "name": "notebook.ipynb"}
+    if has_mimetype:
+        mock_notebook["mimetype"] = None
+    mock_loader.get.return_value = mock_notebook
+    r = client.get("/api/raw/path/notebook.ipynb")
+    assert r.data == b"content"
+
+
 def test_toc(client, mock_loader):
     mock_loader.get_nb.return_value.toc.return_value = "toc"
     r = client.get("/api/notebook/toc/some/notebook.ipynb")

@@ -1,4 +1,5 @@
 import base64
+import os
 from typing import Optional
 
 from flask import Flask
@@ -65,9 +66,13 @@ def raw(path, private=False):
         if download
         else {}
     )
-    if content.get("mimetype", "").startswith("text/"):
-        content["mimetype"] = "text/plain"
-    return Response(content["content"], mimetype=content["mimetype"], **kwargs)
+    mimetype = (
+        "text/plain"
+        if content.get("mimetype", None) is None
+        or content["mimetype"].startswith("text/")
+        else content["mimetype"]
+    )
+    return Response(content["content"], mimetype=mimetype, **kwargs)
 
 
 @app.route("/api/notebook/private-toc/<path:path>", defaults={"private": True})
@@ -117,9 +122,11 @@ def encrypt_path():
     )
 
 
-@app.route("/api/private/<path:path>")
-def decrypt(path):
-    return app.private_loader.resolve_path(path)
+if os.getenv("FLASK_ENV", "") == "development":
+
+    @app.route("/api/private/<path:path>")
+    def decrypt(path):
+        return app.private_loader.resolve_path(path)
 
 
 @app.errorhandler(HTTPException)

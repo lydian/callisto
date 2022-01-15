@@ -10,6 +10,7 @@ HERE = Path(__file__).parent.resolve()
 pkg_json = json.loads((HERE / "front" / "package.json").read_bytes())
 long_description = (HERE / "README.md").read_text()
 
+
 setup(
     name="callisto-nbviewer",
     version=pkg_json["version"],

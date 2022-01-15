@@ -13,7 +13,7 @@
         <a
           class="btn btn-outline-primary"
           role="button"
-          :href="'/api/raw/' + location + '?download=1'"
+          :href="'/api/raw' + location + '?download=1'"
           >Download</a
         >
         <a
@@ -49,7 +49,7 @@ export default {
     return { html: null, toc: null, importURL: null, error: null };
   },
   created() {
-    var loader = this.$loading.show({ canCanel: false });
+    this.loader = this.$loading.show({ canCanel: false });
     var importAPI = this.private
       ? "/api/notebook/private-import"
       : "/api/notebook/import";
@@ -79,8 +79,8 @@ export default {
       })
       .catch((error) => {
         this.error = error;
-      })
-      .finally(loader.hide());
+        this.loader.hide();
+      });
   },
   methods: {
     goToAnchor(anchor) {
@@ -89,7 +89,9 @@ export default {
       this.$refs.notebook.contentWindow.scrollTo({ top: elem.offsetTop });
     },
     load() {
-      console.log(window.location.hash);
+      if (this.html) {
+        this.loader.hide();
+      }
       var hash = window.location.hash;
       if (hash) {
         this.goToAnchor(hash.slice(1));

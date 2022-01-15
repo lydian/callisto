@@ -1,3 +1,6 @@
+# v1.0.2
+- fix download issue when mimetype is None
+- Hide loading after the notebook is fully loaded
 # v1.0.1
 - Fixed wrong dependency
 - Fixed issue failed to download notebook
